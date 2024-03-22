@@ -17,40 +17,50 @@
       height: 100%;
       width: 100%;
     }
-
   </style>
 
   <script>
     require([
-        "esri/WebMap",
-        "esri/views/MapView",
-        "esri/widgets/Editor"
-      ], (
-        WebMap, MapView,
-        Editor
-      ) => {
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/widgets/Editor",
+      "esri/widgets/BasemapToggle"
+    ], (
+      WebMap, MapView,
+      Editor, BasemapToggle
+    ) => {
 
-        // Create a map from the referenced webmap item id
-        const webmap = new WebMap({
-          portalItem: {
-            id: "906e4df56b0243e2b9da46f3d05f1d26"
-          }
-        });
-
-        const view = new MapView({
-          container: "viewDiv",
-          map: webmap
-        });
-
-        view.when(() => {
-          const editor = new Editor({
-            view: view
-          });
-
-          // Add the widget to the view
-          view.ui.add(editor, "top-right");
-        });
+      // Create a map from the referenced webmap item id
+      const webmap = new WebMap({
+        portalItem: {
+          id: "906e4df56b0243e2b9da46f3d05f1d26"
+        }
       });
+
+
+      //Start or javascript code here & Widgets
+      const view = new MapView({
+        container: "viewDiv",
+        map: webmap
+      });
+
+
+      const editor = new Editor({
+        view: view
+      });
+      // Add the widget to the view
+      view.ui.add(editor, "top-right");
+
+      // 1 - Create the widget
+      const toggle = new BasemapToggle({
+        // 2 - Set properties
+        view: view, // view that provides access to the map's 'topo-vector' basemap
+        nextBasemap: "hybrid" // allows for toggling to the 'hybrid' basemap
+      });
+      view.ui.add(toggle, "top-left");
+
+
+    });
   </script>
 </head>
 
