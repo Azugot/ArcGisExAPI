@@ -1,13 +1,11 @@
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Edit features with the Editor widget | Sample | ArcGIS Maps SDK for JavaScript 4.29</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Augusto e Pedro</title>
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
-  <script src="https://js.arcgis.com/4.29/"></script>
-
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" />
   <style>
     html,
     body,
@@ -17,17 +15,37 @@
       height: 100%;
       width: 100%;
     }
+    #toolbarDiv {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      cursor: default;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
+    #infoDiv {
+      position: absolute;
+      top: 15px;
+      left: 60px;
+    }
   </style>
+
+  <script src="https://js.arcgis.com/4.29/"></script>
 
   <script>
     require([
       "esri/WebMap",
       "esri/views/MapView",
       "esri/widgets/Editor",
-      "esri/widgets/BasemapToggle"
+      "esri/widgets/BasemapToggle",
+      "esri/widgets/Measurement",
+      "esri/widgets/ScaleBar",
+      "esri/widgets/Compass" // Add Compass widget
     ], (
       WebMap, MapView,
-      Editor, BasemapToggle
+      Editor, BasemapToggle,
+      Measurement, ScaleBar, Compass // Add Compass widget
     ) => {
 
       // Create a map from the referenced webmap item id
@@ -37,35 +55,78 @@
         }
       });
 
-
       //Start or javascript code here & Widgets
       const view = new MapView({
         container: "viewDiv",
         map: webmap
       });
 
-
       const editor = new Editor({
         view: view
       });
-      // Add the widget to the view
+      // Add the Editor widget to the view
       view.ui.add(editor, "top-right");
 
-      // 1 - Create the widget
-      const toggle = new BasemapToggle({
-        // 2 - Set properties
-        view: view, // view that provides access to the map's 'topo-vector' basemap
-        nextBasemap: "hybrid" // allows for toggling to the 'hybrid' basemap
+      // Create instance of Measurement widget
+      const measurementWidget = new Measurement({
+        view: view
       });
+
+      // Add Measurement widget to view
+      view.ui.add(measurementWidget, "top-right");
+
+      // Create the BasemapToggle widget
+      const toggle = new BasemapToggle({
+        view: view,
+        nextBasemap: "hybrid"
+      });
+
+      // Add the BasemapToggle widget to the view
       view.ui.add(toggle, "top-left");
 
+      // Event listeners for measurement buttons
+      document.getElementById("distance").addEventListener("click", () => {
+        measurementWidget.activeTool = "distance";
+      });
+
+      document.getElementById("area").addEventListener("click", () => {
+        measurementWidget.activeTool = "area";
+      });
+
+      document.getElementById("clear").addEventListener("click", () => {
+        measurementWidget.clear();
+      });
+
+      // Create instance of ScaleBar widget
+      const scaleBar = new ScaleBar({
+        view: view,
+        unit: "dual"
+      });
+
+      // Add ScaleBar widget to view
+      view.ui.add(scaleBar, {
+        position: "bottom-left"
+      });
+
+      // Create instance of Compass widget
+      const compassWidget = new Compass({
+        view: view
+      });
+
+      // Add Compass widget to view
+      view.ui.add(compassWidget, {
+        position: "top-left"
+      });
 
     });
   </script>
 </head>
-
 <body>
-  <div id="viewDiv"></div>
+<div id="viewDiv"></div>
+<div id="toolbarDiv" class="esri-component esri-widget">
+  <button id="distance" class="esri-widget--button esri-interactive esri-icon-measure-line" title="Distance Measurement Tool"></button>
+  <button id="area" class="esri-widget--button esri-interactive esri-icon-measure-area" title="Area Measurement Tool"></button>
+  <button id="clear" class="esri-widget--button esri-interactive esri-icon-trash" title="Clear Measurements"></button>
+</div>
 </body>
-
 </html>
